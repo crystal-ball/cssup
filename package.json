@@ -1,0 +1,14 @@
+{
+  "name": "cssup",
+  "version": "0.0.1",
+  "description": "Colocated style definitions and class name conditions",
+  "license": "ISC",
+  "main": "index.js",
+  "keywords": ["css", "babel"],
+  "contributors": [
+    "Dan Hedgecock <hedgecock.d@gmail.com> (https://danhedgecock.com)"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
