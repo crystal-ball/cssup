@@ -24,6 +24,25 @@ http://astexplorer.net/
   `VariableDeclarator.init` or it may be the
   `VariableDeclarator.init.ArrowFunctionExpression.body`)
 
+## Babel plugin `file`
+
+The visitor receives `state` with a file object:
+
+```javascript
+const file = {
+  opts: {
+    fileName: '/Users/danhedgecock/code/cssup/src/index.js',
+    // This looks like a good candidate for the file name...
+    // It doesn't include the module root, relative to repo...
+    sourceFileName: 'src/index.js',
+    sourceRoot: '/Users/danhedgecock/code/cssup'
+  },
+  parserOpts: {
+    sourceFileName: ''
+  }
+}
+```
+
 ## AST
 
 Basic tree:

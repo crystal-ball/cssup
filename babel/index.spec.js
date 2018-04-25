@@ -1,19 +1,12 @@
 // src/__tests__/index-test.js
 const babel = require('babel-core')
 const plugin = require('./index')
+const { readFileSync } = require('fs')
 
-var example = `
-const regularVariable = 'test'
+// Runs relative to repo root
+const content = readFileSync('./src/index.js')
 
-const testStyles = cssup\`
-.test {
-  color: 'blue';
-}\`
-
-const skipTemplateString = trick\`don't interact\`
-`
-
-it('works', () => {
-  const { code } = babel.transform(example, { plugins: [plugin] })
+it('transforms cssup tagged template literals', () => {
+  const { code } = babel.transform(content, { plugins: [plugin] })
   expect(code).toMatchSnapshot()
 })

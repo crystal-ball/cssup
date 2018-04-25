@@ -4,7 +4,10 @@
   "description": "Colocated style definitions and class name conditions",
   "license": "ISC",
   "main": "index.js",
-  "keywords": ["css", "babel"],
+  "keywords": [
+    "css",
+    "babel"
+  ],
   "contributors": [
     "Dan Hedgecock <hedgecock.d@gmail.com> (https://danhedgecock.com)"
   ],
@@ -13,6 +16,9 @@
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
-    "jest": "^22.4.3"
+    "babel-loader": "^7.1.4",
+    "jest": "^22.4.3",
+    "webpack": "^4.6.0",
+    "webpack-cli": "^2.0.15"
   }
 }

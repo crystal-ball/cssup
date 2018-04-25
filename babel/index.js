@@ -1,15 +1,21 @@
+// Reference to super secret registration function, we only want to call this if it
+// has been set by a build tool
+const secretKey =
+  '__SUPER_SECRET_CSSUP_BRIDGE_DO_NOT_USE_THIS_OR_CHAUNCEY_WILL_BECOME_VERY_UPSET'
+
 /**
  *
  * @param {Object} babel
  */
 module.exports = function(babel) {
-  console.log('👋 Babel plugin')
   const { types: t } = babel
 
   return {
     visitor: {
       // visitor contents
       TaggedTemplateExpression(path, state) {
+        const { sourceFileName } = state.file.opts
+
         // If this is not a `cssup` TTE, we're done
         if (!path.get('tag').isIdentifier({ name: 'cssup' })) return
 
@@ -24,10 +30,16 @@ module.exports = function(babel) {
         // Create only the CSS contents by concatenating all of the quasis
         const css = quasis.reduce(
           (acc, curr) => (acc += curr.get('value').node.cooked),
-          ''
+          `/* ${sourceFileName} */\n`
         )
 
-        console.log('CSS: ', css)
+        // When being used with build tooling, register the extracted class name
+        if (global[secretKey] && global[secretKey].registerClassName) {
+          global[secretKey].registerClassName(css, {
+            id: sourceFileName,
+            fileName: sourceFileName
+          })
+        }
 
         // Static styles definition, replace node with a static value
         if (expressions.length === 0) {
