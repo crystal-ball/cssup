@@ -8,6 +8,21 @@ workflow!
 This is the goal for the initial supported workflow (purposely as simple as
 possible, future enhancements can be added to the roadmap)
 
+1.  Styles are written in component files using a Tagged Template String (TTS)
+1.  Babel plugin is included in `.babelrc` and during Babel transpile CSSUp TTSs
+    are transpiled to class names:
+    1.  CSS with static class name(s) usage is transpiled to a string of the
+        class name(s)
+    1.  CSS with dynamic class name(s) usage is transpiled to an arrow function
+        returning a `classnames` compatible object.
+    1.  Transpiled class name(s) value is used in component (eg with
+        `classNames` for JSX)
+1.  During transpile Babel plugin checks for a build tool registration and if
+    one exists, calls it with the file info and CSS from the TTS quasis (the
+    static content of the TTS).
+1.  Build tool (webpack plugin) registers class names and then processes to
+    valid CSS and emits a stylesheet to build assets.
+
 ## ✅ Todo
 
 * [ ] Add a default CSS processor setup to the webpack plugin that supports a
@@ -25,6 +40,10 @@ possible, future enhancements can be added to the roadmap)
 
 * [ ] Enhance the CSS processor used by the webpack plugin to be configurable so
       you can use whatever (pre/post)processor setup you want.
+* [ ] Look into development env setup, initial process is going to emit an asset
+      at end of build, so page will have to be reloaded to update styles.
+      Investigate including CSS value in a CSSUp TTS during dev environments and
+      using a `cssup` function to inject styles to a DOM node.
 * [ ] Split repo up into a mono-repo with Babel and webpack packages. Add a
       syntax highlighter using [`vscode-styled-components`][styled] as an
       example. Explore creating an Ember addon...
