@@ -1,109 +1,102 @@
+crypto = require('crypto')
+
+/** Matches the primary class name of a style block */
+const primaryClassNameRegex = /^\s*\.([^{\s]+)/m
+
+/** Create a hash of a string use md5 hashing */
+const createHash = content =>
+  crypto
+    .createHash('md5')
+    .update(css)
+    .digest('hex')
+    .slice(0, 6)
+
+/** Extract the primary class name from a style block */
+const parseClassName = css => {
+  const match = css.match(primaryClassNameRegex)
+  // ⚠️ TODO: check for more than one class name or no class names and log an error
+  return match && match[1] ? { hash, className: match[1] } : {}
+}
+
 // Reference to super secret registration function, we only want to call this if it
 // has been set by a build tool
 const secretKey =
   '__SUPER_SECRET_CSSUP_BRIDGE_DO_NOT_USE_THIS_OR_CHAUNCEY_WILL_BECOME_VERY_UPSET'
 
 /**
- *
- * @param {Object} babel
+ * Babel plugin returns an object that defines node visitors, the only node that we
+ * care about is Tagged Template Expressions
+ * @param {Object} babel The Babel context
  */
-module.exports = function(babel) {
-  const { types: t } = babel
+module.exports = ({ types: t }) => ({
+  visitor: {
+    TaggedTemplateExpression(path, state) {
+      // If this is not a `cssup` TTE, we're done
+      if (!path.get('tag').isIdentifier({ name: 'cssup' })) return
 
-  return {
-    visitor: {
-      // visitor contents
-      TaggedTemplateExpression(path, state) {
-        const { sourceFileName } = state.file.opts
+      const { sourceFileName } = state.file.opts
 
-        // If this is not a `cssup` TTE, we're done
-        if (!path.get('tag').isIdentifier({ name: 'cssup' })) return
+      // Get the entire template string node (`TemplateLiteral`)
+      const quasi = path.get('quasi')
 
-        // Get the entire template string
-        // This is type `TemplateLiteral
-        const quasi = path.get('quasi')
+      // Get all of the quasis and expressions from the template string
+      const quasis = quasi.get('quasis')
+      const expressions = quasi.get('expressions')
 
-        // Get all of the quasis and expressions from the quasi
-        const quasis = quasi.get('quasis')
-        const expressions = quasi.get('expressions')
+      // Create only the CSS contents by concatenating all of the quasis
+      const css = quasis.reduce(
+        (acc, curr) => (acc += curr.get('value').node.cooked),
+        `/* ${sourceFileName} */\n`,
+      )
 
-        // Create only the CSS contents by concatenating all of the quasis
-        const css = quasis.reduce(
-          (acc, curr) => (acc += curr.get('value').node.cooked),
-          `/* ${sourceFileName} */\n`
-        )
+      /*
+       * Processing of styles may be async, AND we only care about hashing the
+       * primary class name for a styles block, SO in this plugin we create a
+       * hash and replace the primary class name with it.
+       *
+       * ℹ️ The hash should always be unique, even if styles have the same content
+       * because we include the filepath as a comment in the content 😉
+       */
+      const hash = createHash(css)
+      const className = parseClassName(css)
+      const hashedClassName = `${className}--${hash}`
 
-        // When being used with build tooling, register the extracted class name
-        if (global[secretKey] && global[secretKey].registerClassName) {
-          global[secretKey].registerClassName(css, {
-            id: sourceFileName,
-            fileName: sourceFileName
-          })
-        }
+      // When being used with build tooling, register the extracted class name
+      if (global[secretKey] && global[secretKey].registerClassName) {
+        const processedCSS = css.replace(primaryClassNameRegex, hashedClassName)
 
-        // Static styles definition, replace node with a static value
-        if (expressions.length === 0) {
-          return path.replaceWith(t.stringLiteral('static-class'))
-        }
-
-        const dynamicClassNamesProperties = []
-        expressions.forEach(expression => {
-          const properties = expression.get('properties')
-
-          properties.forEach(property => {
-            const keyNode = property.get('key')
-            const valueNode = property.get('value')
-
-            dynamicClassNamesProperties.push(
-              t.objectProperty(
-                keyNode.node,
-                valueNode.node,
-                t.isTemplateLiteral(keyNode)
-              )
-            )
-          })
+        global[secretKey].registerClassName(processedCSS, {
+          id: hashedClassName,
+          fileName: sourceFileName,
         })
-
-        return path.replaceWith(t.objectExpression(dynamicClassNamesProperties))
       }
-    }
-  }
-}
 
-// const dynamicClassNames = t.objectExpression([
-//   t.objectProperty('key','value')
-// ])
+      // Static styles definition, replace node with a static value
+      if (expressions.length === 0) {
+        return path.replaceWith(t.stringLiteral(hashedClassName))
+      }
 
-// console.log('expressions: ', expressions)
+      const dynamicClassNamesProperties = [
+        t.objectProperty(t.stringLiteral(hashedClassName), t.booleanLiteral(true)),
+      ]
+      expressions.forEach(expression => {
+        const properties = expression.get('properties')
 
-// REPLACING A NODE:
-// path.replaceWith(t.binaryExpression('**', path.node.left, t.numberLiteral(2)))
+        properties.forEach(property => {
+          const keyNode = property.get('key')
+          const valueNode = property.get('value')
 
-// if (t.isIdentifier(keyNode)) {
-//   key = t.identifier(keyNode.node.name)
-// } else if (t.isStringLiteral(keyNode)) {
-//   key = t.stringLiteral(keyNode.node.value)
-// } else if (t.isTemplateLiteral()) {
-//   // ⚠️ TODO: key = t.templateLiteral(quasis, expressions)
-//   key = t.stringLiteral('key')
-// } else {
-//   console.warn('unhandled key type: ', keyNode.node)
-// }
+          dynamicClassNamesProperties.push(
+            t.objectProperty(
+              keyNode.node,
+              valueNode.node,
+              t.isTemplateLiteral(keyNode),
+            ),
+          )
+        })
+      })
 
-// console.log(keyNode.node)
-
-// const key = t.stringLiteral('key')
-
-// ⚠️ TODO: handle template literal...
-// console.log('Computed: ', keyNode.node.computed)
-// console.log(keyNode.get('computed'))
-
-// const key = t.isTemplateLiteral(keyNode)
-//   ? t.stringLiteral('key')
-//   : keyNode.node
-
-// const value = t.identifier('value')
-
-// dynamicClassNamesProperties.push(
-//   t.objectProperty(key, valueNode.node)
-// )
+      return path.replaceWith(t.objectExpression(dynamicClassNamesProperties))
+    },
+  },
+})

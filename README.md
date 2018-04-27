@@ -26,10 +26,10 @@ possible, future enhancements can be added to the roadmap)
 ## ✅ Todo
 
 * [ ] Add a default CSS processor setup to the webpack plugin that supports a
-      complete set of sensible features.
-      🤔 Thinking a PostCSS setup that supports SASSy syntax with local modules,
-      variables, mixins, etc would provide features needed without requiring
-      `node-sass` be a dependency of CSSUp
+      complete set of sensible features. 🤔 Thinking a PostCSS setup that
+      supports SASSy syntax with local modules, variables, mixins, etc would
+      provide features needed without requiring `node-sass` be a dependency of
+      CSSUp
 * [ ] After processing of the CSS file we need to extract the unique class name
       and include it as either Babel transform literal value or as part of the
       dynamic class names object expression (with default value true). We'll
@@ -52,5 +52,6 @@ possible, future enhancements can be added to the roadmap)
       library authors (allow library authors to write CSS for library components
       in the component files, then emit as importable partials during a library
       transpile build stage)
+* [ ] Check classnames used against parsed content to ensure they're valid
 
 [styled]: https://github.com/styled-components/vscode-styled-components

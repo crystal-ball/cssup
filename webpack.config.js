@@ -7,10 +7,10 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        use: [{ loader: 'babel-loader' }]
-      }
-    ]
+        use: [{ loader: 'babel-loader' }],
+      },
+    ],
   },
 
-  plugins: [new CSSUpPlugin()]
+  plugins: [new CSSUpPlugin()],
 }

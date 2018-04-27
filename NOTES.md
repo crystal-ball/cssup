@@ -1,10 +1,9 @@
-## Handbook
+## Resources
 
 https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md
-
-## Explorer
-
 http://astexplorer.net/
+https://github.com/babel/babel/tree/master/packages/babel-types
+https://github.com/brigand/babel-plugin-testing-example
 
 ## Terms
 
@@ -18,9 +17,9 @@ http://astexplorer.net/
   the `value`.
 * Assembling the contents of the styles is concatenating all of the `quasis`'s
   `TemplateElement.raw` values.
-* ✅ When manipulating: replace the entire `TaggedTemplateExpression` with either
-  a `Literal` node for static class names or an `ObjectExpression` for dynamic
-  classes (note that `TaggedTemplateExpression` may be the
+* ✅ When manipulating: replace the entire `TaggedTemplateExpression` with
+  either a `Literal` node for static class names or an `ObjectExpression` for
+  dynamic classes (note that `TaggedTemplateExpression` may be the
   `VariableDeclarator.init` or it may be the
   `VariableDeclarator.init.ArrowFunctionExpression.body`)
 
@@ -35,11 +34,11 @@ const file = {
     // This looks like a good candidate for the file name...
     // It doesn't include the module root, relative to repo...
     sourceFileName: 'src/index.js',
-    sourceRoot: '/Users/danhedgecock/code/cssup'
+    sourceRoot: '/Users/danhedgecock/code/cssup',
   },
   parserOpts: {
-    sourceFileName: ''
-  }
+    sourceFileName: '',
+  },
 }
 ```
 
