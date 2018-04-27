@@ -1,4 +1,4 @@
-const cssup = () => {}
+import cssup from '../browser'
 
 const regularVariable = 'test'
 

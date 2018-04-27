@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`transforms cssup tagged template literals 1`] = `
-"const cssup = () => {};
+"import cssup from '../browser';
 
 const regularVariable = 'test';
 
-const testStyles = 'static-class';
+const testStyles = 'test--b37f78';
 
 const skipTemplateString = trick\`don't interact\`;
 
-const btnStyles = ({ color, outline, size }) => ({
+const btnStyles = ({ color, outline, size }) => cssup('btn--480701', {
   outline: outline,
   'test-string-key': size && color,
   [\`test-template-key-\${size}\`]: size && !col

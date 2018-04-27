@@ -7,7 +7,7 @@ const primaryClassNameRegex = /^\s*\.([^{\s]+)/m
 const createHash = content =>
   crypto
     .createHash('md5')
-    .update(css)
+    .update(content)
     .digest('hex')
     .slice(0, 6)
 
@@ -15,7 +15,7 @@ const createHash = content =>
 const parseClassName = css => {
   const match = css.match(primaryClassNameRegex)
   // ⚠️ TODO: check for more than one class name or no class names and log an error
-  return match && match[1] ? { hash, className: match[1] } : {}
+  return match && match[1] ? match[1] : null
 }
 
 // Reference to super secret registration function, we only want to call this if it
@@ -76,9 +76,7 @@ module.exports = ({ types: t }) => ({
         return path.replaceWith(t.stringLiteral(hashedClassName))
       }
 
-      const dynamicClassNamesProperties = [
-        t.objectProperty(t.stringLiteral(hashedClassName), t.booleanLiteral(true)),
-      ]
+      const dynamicClassNamesProperties = []
       expressions.forEach(expression => {
         const properties = expression.get('properties')
 
@@ -96,7 +94,13 @@ module.exports = ({ types: t }) => ({
         })
       })
 
-      return path.replaceWith(t.objectExpression(dynamicClassNamesProperties))
+      // creates function `cssup(hashedClassName, { dynamicClassNames })
+      return path.replaceWith(
+        t.callExpression(t.identifier('cssup'), [
+          t.stringLiteral(hashedClassName),
+          t.objectExpression(dynamicClassNamesProperties),
+        ]),
+      )
     },
   },
 })
