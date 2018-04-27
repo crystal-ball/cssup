@@ -1,6 +1,6 @@
 {
   "name": "cssup",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Colocated style definitions and class name conditions",
   "license": "ISC",
   "main": "index.js",
