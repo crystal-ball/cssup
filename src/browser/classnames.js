@@ -23,7 +23,7 @@ SOFTWARE.
 */
 
 // (modified to only accept strings, numbers and objects)
-function classNames(...args) {
+export default (...args) => {
   var classes = []
 
   args.forEach(arg => {

@@ -4,6 +4,7 @@
   "description": "Colocated style definitions and class name conditions",
   "license": "ISC",
   "main": "index.js",
+  "browser": "browser.js",
   "keywords": [
     "css",
     "babel"

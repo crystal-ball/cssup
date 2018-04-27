@@ -1,19 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`transforms cssup tagged template literals 1`] = `
-"import cssup from '../browser';
+"import cssup from 'cssup';
 
 const regularVariable = 'test';
 
-const testStyles = 'test--b37f78';
+const staticTest = 'test--b37f78';
 
-const skipTemplateString = trick\`don't interact\`;
+const testIgnoreTemplateExpression = cssip\`this template string should remain untouched\`;
 
-const btnStyles = ({ color, outline, size }) => cssup('btn--480701', {
+const dynamicTest = ({ color, outline, size }) => cssup('btn--1cbe6d', {
   outline: outline,
   'test-string-key': size && color,
   [\`test-template-key-\${size}\`]: size && !col
-});
-
-export default btnStyles;"
+});"
 `;

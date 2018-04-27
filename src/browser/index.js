@@ -1,3 +1,3 @@
 import classnames from './classnames'
 
-export default classNames
+export default classnames

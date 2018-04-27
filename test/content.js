@@ -1,8 +1,8 @@
-import cssup from '../browser'
+import cssup from 'cssup'
 
 const regularVariable = 'test'
 
-const testStyles = cssup`
+const staticTest = cssup`
 .test {
   color: 'blue';
   line-height: 14px;
@@ -10,24 +10,16 @@ const testStyles = cssup`
   &.nested { background: 'transparent'; }
 }`
 
-const skipTemplateString = trick`don't interact`
+const testIgnoreTemplateExpression = cssip`this template string should remain untouched`
 
-const btnStyles = ({ color, outline, size }) => cssup`
+const dynamicTest = ({ color, outline, size }) => cssup`
 .btn {
   display: inline-block;
   font-weight: 400;
   text-align: center;
   white-space: nowrap;
   vertical-align: middle;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
-  border: 1px solid transparent;
-  padding: 0.375rem 0.75rem;
-  font-size: 0.9375rem;
-  line-height: 1.5;
-  border-radius: 0.25rem;
 
   ${{ outline }}
   ${{ 'test-string-key': size && color }}
@@ -39,5 +31,3 @@ const btnStyles = ({ color, outline, size }) => cssup`
     border-color: #374d68;
   }
 }`
-
-export default btnStyles

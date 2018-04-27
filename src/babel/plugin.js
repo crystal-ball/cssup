@@ -1,4 +1,4 @@
-crypto = require('crypto')
+const crypto = require('crypto')
 
 /** Matches the primary class name of a style block */
 const primaryClassNameRegex = /^\s*\.([^{\s]+)/m
@@ -63,7 +63,10 @@ module.exports = ({ types: t }) => ({
 
       // When being used with build tooling, register the extracted class name
       if (global[secretKey] && global[secretKey].registerClassName) {
-        const processedCSS = css.replace(primaryClassNameRegex, hashedClassName)
+        const processedCSS = css.replace(
+          primaryClassNameRegex,
+          `.${hashedClassName}`,
+        )
 
         global[secretKey].registerClassName(processedCSS, {
           id: hashedClassName,
