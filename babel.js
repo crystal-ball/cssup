@@ -1,3 +1,3 @@
-const babelTransformPlugin = require('./babel')
+const babelTransformPlugin = require('./babel/plugin')
 
 module.exports = babelTransformPlugin

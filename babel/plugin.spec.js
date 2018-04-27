@@ -1,7 +1,8 @@
 // src/__tests__/index-test.js
 const babel = require('babel-core')
-const plugin = require('./index')
 const { readFileSync } = require('fs')
+
+const plugin = require('./plugin')
 
 // Runs relative to repo root
 const content = readFileSync('./src/index.js')
