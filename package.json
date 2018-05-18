@@ -18,6 +18,8 @@
   },
   "dependencies": {
     "postcss": "^6.0.21",
+    "postcss-comment": "^2.0.0",
+    "postcss-custom-properties": "^7.0.0",
     "postcss-nested": "^3.0.0"
   },
   "devDependencies": {

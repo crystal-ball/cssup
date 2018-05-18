@@ -1,7 +1,7 @@
 ## Resources
 
 https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md
-http://astexplorer.net/
+https://babeljs.io/docs/core-packages/babel-types/ http://astexplorer.net/
 https://github.com/babel/babel/tree/master/packages/babel-types
 https://github.com/brigand/babel-plugin-testing-example
 
