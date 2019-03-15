@@ -23,6 +23,8 @@ const parseClassName = css => {
 const secretKey =
   '__SUPER_SECRET_CSSUP_BRIDGE_DO_NOT_USE_THIS_OR_CHAUNCEY_WILL_BECOME_VERY_UPSET'
 
+const files = {}
+
 /**
  * Babel plugin returns an object that defines node visitors, the only node that we
  * care about is Tagged Template Expressions
@@ -30,11 +32,39 @@ const secretKey =
  */
 module.exports = ({ types: t }) => ({
   visitor: {
+    Program: {
+      enter(path, state) {
+        console.log('Enter program ', state.file.opts.sourceFileName)
+      },
+      exit(path, state) {
+        const { sourceFileName } = state.file.opts
+
+        if (!files[sourceFileName]) return
+
+        console.log('Program exiting! Time to add CSS file imports')
+        console.log(state.file.opts.sourceFileName)
+        console.log(path.unshiftContainer)
+        const identifier = t.identifier('cssupStyles')
+        const importDefaultSpecifier = t.importDefaultSpecifier(identifier)
+        // const declaration = t.importDeclaration(
+        //   [importDefaultSpecifier],
+        //   t.stringLiteral(`./${sourceFileName.replace(/\.jsx?/, '.css')}`),
+        // )
+        const declaration = t.importDeclaration(
+          [],
+          t.stringLiteral(`./${sourceFileName.replace(/\.jsx?/, '.css')}`),
+        )
+        path.unshiftContainer('body', declaration)
+      },
+    },
+
     TaggedTemplateExpression(path, state) {
       // If this is not a `cssup` TTE, we're done
       if (!path.get('tag').isIdentifier({ name: 'cssup' })) return
 
       const { sourceFileName } = state.file.opts
+
+      files[sourceFileName] = true
 
       // Get the entire template string node (`TemplateLiteral`)
       const quasi = path.get('quasi')
@@ -45,7 +75,7 @@ module.exports = ({ types: t }) => ({
 
       // Create only the CSS contents by concatenating all of the quasis
       const css = quasis.reduce(
-        (acc, curr) => (acc += curr.get('value').node.cooked),
+        (acc, curr) => acc + curr.get('value').node.cooked,
         `/* ${sourceFileName} */\n`,
       )
 
@@ -76,7 +106,8 @@ module.exports = ({ types: t }) => ({
 
       // Static styles definition, replace node with a static value
       if (expressions.length === 0) {
-        return path.replaceWith(t.stringLiteral(hashedClassName))
+        path.replaceWith(t.stringLiteral(hashedClassName))
+        return
       }
 
       const dynamicClassNamesProperties = []
@@ -98,7 +129,7 @@ module.exports = ({ types: t }) => ({
       })
 
       // creates function `cssup(hashedClassName, { dynamicClassNames })
-      return path.replaceWith(
+      path.replaceWith(
         t.callExpression(t.identifier('cssup'), [
           t.stringLiteral(hashedClassName),
           t.objectExpression(dynamicClassNamesProperties),

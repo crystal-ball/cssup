@@ -8,7 +8,10 @@ const plugin = require('./plugin')
 const content = readFileSync(resolve(__dirname, '../../test/content.js'))
 
 it('transforms cssup tagged template literals', () => {
-  const { code } = babel.transform(content, { plugins: [plugin] })
+  const { code } = babel.transform(content, {
+    plugins: [plugin],
+    sourceFileName: 'plugin.spec.js',
+  })
   expect(code).toMatchSnapshot()
 })
 

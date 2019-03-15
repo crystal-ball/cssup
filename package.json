@@ -13,7 +13,7 @@
     "Dan Hedgecock <hedgecock.d@gmail.com> (https://danhedgecock.com)"
   ],
   "scripts": {
-    "test": "jest",
+    "test": "jest src",
     "format": "prettier --write *.md *.js \"{babel,webpack}/**/*.{js,scss}\""
   },
   "dependencies": {
